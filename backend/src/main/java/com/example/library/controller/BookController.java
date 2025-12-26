@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class BookController {
 
     @Autowired
@@ -23,6 +25,7 @@ public class BookController {
 
     // ➕ Add new book
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Nonnull
     public ResponseEntity<Book> addBook(@RequestBody @Nonnull Book book) {
         Book savedBook = bookService.addBook(book);
@@ -31,6 +34,7 @@ public class BookController {
 
     // 📚 Get all books
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Nonnull
     public ResponseEntity<List<Book>> getAllBooks() {
         List<Book> books = bookService.getAllBooks();
@@ -39,6 +43,7 @@ public class BookController {
 
     // 🔍 Get book by ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Nonnull
     public ResponseEntity<Book> getBookById(@PathVariable @Nonnull String id) {
         Optional<Book> book = bookService.getBookById(id);
@@ -48,6 +53,7 @@ public class BookController {
 
     // ✏️ Update book details
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Nonnull
     public ResponseEntity<Book> updateBook(@PathVariable @Nonnull String id,
                                            @RequestBody @Nonnull Book book) {
@@ -60,6 +66,7 @@ public class BookController {
 
     // ❌ Delete book by ID
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Nonnull
     public ResponseEntity<Void> deleteBookById(@PathVariable @Nonnull String id) {
         Optional<Book> book = bookService.getBookById(id);
